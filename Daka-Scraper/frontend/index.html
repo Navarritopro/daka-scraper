@@ -1,0 +1,55 @@
+<script>
+    async function loadData() {
+        try {
+            // KPIs
+            const resKpi = await fetch('/api/kpis');
+            if (resKpi.ok) {
+                const kpi = await resKpi.json();
+                document.querySelectorAll('.kpi-value')[0].textContent = kpi.total_products || 0;
+                document.querySelectorAll('.kpi-value')[1].textContent = kpi.price_changes || 0;
+                document.querySelectorAll('.kpi-value')[2].textContent = kpi.out_of_stock || 0;
+                document.querySelectorAll('.kpi-value')[3].textContent = kpi.promotions || 0;
+            }
+
+            // Tabla de productos
+            const resProd = await fetch('/api/products?limit=20');
+            if (resProd.ok) {
+                const products = await resProd.json();
+                const tbody = document.querySelector('table tbody');
+                if (tbody) {
+                    tbody.innerHTML = products.map(p => `
+                        <tr>
+                            <td>${p.nombre || 'N/A'}</td>
+                            <td>${p.sap || 'N/A'}</td>
+                            <td class="price">$${p.price_usd ? p.price_usd.toFixed(2) : '--'}</td>
+                            <td>--</td><td>--</td><td>Disponible</td><td>--</td>
+                            <td>${p.last_update ? new Date(p.last_update).toLocaleString() : '--'}</td>
+                        </tr>
+                    `).join('');
+                }
+            }
+        } catch(e) {
+            console.error('Error loading data:', e);
+        }
+    }
+
+    // Botón manual
+    document.querySelector('.primary')?.addEventListener('click', async function(e) {
+        const btn = e.currentTarget;
+        btn.disabled = true;
+        btn.textContent = '⏳ Iniciando...';
+        try {
+            const res = await fetch('/api/trigger', { method: 'POST' });
+            const data = await res.json();
+            alert(data.message || 'Scraping iniciado. Revisa el progreso en GitHub Actions.');
+        } catch(err) {
+            alert('Error: ' + err.message);
+        }
+        btn.disabled = false;
+        btn.textContent = '▶ Ejecutar scraping';
+    });
+
+    // Cargar datos al inicio y cada 30 segundos
+    loadData();
+    setInterval(loadData, 30000);
+</script>
