@@ -1,11 +1,5 @@
 {
   "rewrites": [
-    { "source": "/api/(.*)", "destination": "/backend/main.py" }
-  ],
-  "functions": {
-    "backend/main.py": {
-      "runtime": "python3.9",
-      "maxDuration": 10
-    }
-  }
+    { "source": "/api/(.*)", "destination": "/api/main.py" }
+  ]
 }
