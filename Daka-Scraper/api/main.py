@@ -1,11 +1,8 @@
-from fastapi import FastAPI
+from http.server import BaseHTTPRequestHandler
 
-app = FastAPI()
-
-@app.get("/api/kpis")
-async def get_kpis():
-    return {"total_products": 0, "price_changes": 0, "out_of_stock": 0, "promotions": 0}
-
-@app.get("/")
-async def root():
-    return {"status": "ok", "message": "API funcionando"}
+class handler(BaseHTTPRequestHandler):
+    def do_GET(self):
+        self.send_response(200)
+        self.send_header('Content-type', 'application/json')
+        self.end_headers()
+        self.wfile.write('{"message": "API funcionando"}'.encode())
