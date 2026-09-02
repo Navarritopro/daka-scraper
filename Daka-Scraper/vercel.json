@@ -1,23 +1,6 @@
 {
-  "builds": [
-    {
-      "src": "frontend/index.html",
-      "use": "@vercel/static"
-    },
-    {
-      "src": "backend/main.py",
-      "use": "@vercel/python"
-    }
-  ],
-  "routes": [
-    {
-      "src": "/api/(.*)",
-      "dest": "/backend/main.py"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/frontend/index.html"
-    }
+  "rewrites": [
+    { "source": "/api/(.*)", "destination": "/backend/main.py" }
   ],
   "functions": {
     "backend/main.py": {
